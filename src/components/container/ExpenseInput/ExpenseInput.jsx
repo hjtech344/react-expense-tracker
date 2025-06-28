@@ -1,8 +1,22 @@
+import { useDispatch } from "react-redux";
 import s from "./style.module.css";
+import { addExpense } from "store/expense/expense-slice";
 
 export function ExpenseInput(props) {
+  // Pour emettre un evenement (actions)
+  const dispatch = useDispatch();
+
+  function handleSubmit(e){
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    let name  = formData.get('name');
+    let price = formData.get('price');
+    console.log("name : ", name + " price : ", price)
+    dispatch(addExpense({name, price}));
+  }
+
   return (
-    <form>
+    <form onSubmit={handleSubmit}>
       <div className="row justify-content-center">
         <div className="col-12 col-sm-5 col-md-4 col-lg-4 mb-2">
           <input

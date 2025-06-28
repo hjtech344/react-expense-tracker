@@ -1,0 +1,492 @@
+# Redux avec react 
+
+1. C'est quoi redux ?
+Redux est une bibliothèque de gestion d’état qui fournit un moyen prévisible de stocker et de mettre à jour l’état global 
+de l’application.
+En utilisant Redux, on va stocker toutes les données dont on a besoin dans un seul « store », qui peut être partagé entre
+tous les composants de l’application.
+
+2. Quel sont les aventages de redux ?
+Les grands avantages de Redux sont les suivantes :
+
+Séparation des concepts :
+Toute la logique de gestion de state étant externalisée, on rend nos composants “stateless”. Ainsi, ils n’ont plus qu’un seul
+rôle : afficher les portions de l’UI.
+
+État immuable :
+Le store Redux est immuable, ce qui signifie que l’état ne peut pas être modifié directement. On va passer par des “actions”,
+qui sont des objets décrivant ce qui doit être modifié. Cette approche garantit que l’état de l’application reste cohérent 
+et facilite la détection des erreurs.
+
+Facilite la gestion des mises à jour d’état :
+Redux utilise un mécanisme appelé « reducers » pour gérer les mises à jour de l’état. Ce sont des fonctions qui vont produire
+un nouveau “state”. Cette approche facilite la gestion des mises à jour d’état ainsi que la gestion des interactions 
+complexes entre les différents composants de l’application.
+
+Facilite le débogage :
+Redux facilite le débogage de l’application en stockant toutes les actions qui ont été dispatchées dans un journal. Cela vous
+permet de voir exactement ce qui s’est passé dans l’application à un moment donné, ainsi que de comprendre comment l’état a 
+changé, et de revenir en arrière pour voir ce qui s’est passé lors d’une interaction spécifique.
+
+Facilité de partage de l’état :
+En stockant l’état global de l’application dans le store Redux, il devient facile de partager l’état entre différents 
+composants de l’application. Cela peut être utile pour les applications qui nécessitent une coordination complexe entre 
+différents composants.
+
+Gestion d’état centralisée :
+On stocke l’état global de l’application dans un seul endroit, appelé “le store”, ce qui nous permet de maintenir une vue
+d’ensemble de l’état de l’application. C’est plus simple à maintenir, mais aussi à faire évoluer, et le “state” est également
+plus facilement accessible à tous les composants.
+
+
+Remarque : Il ne faut pas centraliser tout le state en dehors des composants. Il faut centraliser ce qui concerne la 
+configuration de l’application, ou tout état global partagé entre les composants.
+
+👨‍🏫 Exemple :
+Un état de theme (dark/light ou compact/large) doit aller dans Redux, ce qui permettra de le récupérer dans les différents
+composants. Le token de l’utilisateur connecté peut, lui aussi, aller dans Redux. Par contre, un listing d’une ressource 
+(liste d’utilisateurs, d’article de blog…) ne doit pas y aller, car l’état d’un composant ne doit pas se retrouver dans Redux.
+
+
+# le fichier jsconfig.json : le fichier jsconfig est une configuration qui va dire a react que notre dossier principale
+ou baseUrl se trouve dans le dossier .src/  et qu'on est en react, cela va nous permettre de faire nos import sans mettre
+des chemin relatifs. Ex : './App.js' maitenant on doit specifier seulement le nom du dossier puis le nom du fichier.
+
+Pour le Tp redux on va besoin de deux librairies qui sont :
+@reduxjs/toolkit@1.9.0  et react-redux@8.0.5
+pour lancer l'installation il suffit de mettre npm install devant le nom de ces librairies.
+
+Explication :
+@reduxjs/toolkit c'est le coeur de reduxjs, toolkit c'est une espece de surcouche autour de redux qui permet de rendre 
+redux plus facile a utiliser et qui donne acces a plein de nouvelle fonctionalitées.
+
+react-redux c'est la librairie specifique qui permet de communiquer avec redux quand on est avec react.
+
+# Comment configurer redux avec react ?
+Pour configurer redux avec react il suffit d'aller dans le dossier /src puis creer un nouveau dossier appelé store
+puis dans store on va creer un fichier appelé index.js c'est dans ce fichier qu'on va faire la configuration de redux.
+
+configuration de redux : 
+1. on va importer configureStore depuis la librairie @reduxjs/toolkit
+2. on va declarer une costante appelé store on va lui affecter une valeur, cette valeur est la fonction configureStore 
+qu'on vient d'importé tout a l'heure. cette fonction configureStore va prendre param un objet. Dans cette objet on va
+avoir une cle appelé reducer qui a comme valeur pour l'instant un objet vide. puis il faut exporter cette constante
+pour que nous puissons acces avec. ceci est la configuration minimale pour que redux fonctionne dans notre app react.
+
+pour que cela fonctionne il faut aller dans la racine de notre app qui est index.js , Dans index.js on va importer
+un composant appelé Provider qui vient de la librairie react-redux. Apres l'importation on va enrober ou entourer
+notre composant App avec ce composant Provider. ce composant provider lui meme a besoin d'un props(c'est requis) ce props
+est appelé store , puis que nous avons configurer une constante store au paravant donc il suffit d'importer cette constante
+puis de le passer a la props store du composant Provider.
+
+pour bien utiliser redux et pour le debogage il suffit d'installer une extension dans notre navigateur qui s'appelle
+redux dev tools. puis on peut profiter de redux.
+
+
+# Concept important de redux depuis toolkit : slice et etat initial
+sclice : les tranches
+Dans redux on va avoir toutes nos données sous formes de json : key et value, quand on va creer des section a chaque fois
+dans le json , on cree une slice ou une tranche de donné. par exemple on va creer une slice qui va permet de gerer les
+depences de l'application. pour cela on va dans le store/ puis on va creer une section appelé expensive/ dans ce dossier
+on va creer un fichier appelé expensive-slice.js . c'est dans ce fichier qu'on va creer nos slice ou tranche de donne
+
+1. on doit importer une fonction appelé createSlice a partir de la librairie @reduxjs/toolkit
+Ensuite une slice ou tranche de donné lorsqu'on va le creer c'est un objet mais c'est pas un objet qui contient seulement
+des données , puis qu'en arrière il nous permettent de modifier les données de notre sclice et faire plein d'autre choses.
+
+2. on va declarer une constante on va lui affecter la fonction createSlice qu'on vient d'importer puis on va lui passer une
+cle appelé name qui prend comme valeur en generale le nom du slice c'est a dire le nom de la constante
+
+3. etat initial : on va lui passer une deuxième cle qui aura comme valeur les données qu'on veut avoir lors de
+l'initialisation dans notre cas ce sera expenseList qui sera un tableau vide []. 
+
+4. on doit faire la reference de cette sclice, pour cela on doit aller dans le fichier index de notre store puis
+on va creer une cle en maj dans notre cas on va l'appeller EXPENSE qui va prendre comme valeur les données rafrechis 
+du slice en question pour cela nous allons importer notre expenseSlice puis on va utiliser .reducer pour ecouter ou
+verifier si quelque chose a changé dans notre tranche de donné et de le mettre a jour dans la cle.
+
+
+# Ecrire dans le store avec les actions et useDispatch() :
+
+comment creer une action ?
+une action c'est une fonction qu'on va ecrire dans notre slice ou tranche de donné qui nous permettons de modifier
+notre sclice quand on va l'appeler.
+
+EXO-1 : on va remplacer Expence input par un formulaire qui nous permettons de taper un nom et prix et mettre un boutton
+de validation. Le but c'est quand on va cliquer sur le boutton de validation pour qu'on ajoute ces infos dans le tableau
+expenseList de notre store.
+
+1.pour cela on va aller dans notre composant App puis on va remplacer le texte expense input par le composant expenseInput
+
+2. On va preparer une fonction d'evenement pour recuperer les données du formulaire lorsqu'on appuie sur le boutton add
+et ensuite les envoyé a l'action qu'on va creer.
+pour cela on va creer une fonction appelé handleSubmit, on va desactiver le comportement par defaut du formulaire.
+pour recuperer les données du formulaire on faire une nouvelle initialisation de : new FormData() qui va prendre les données
+que l'utilisateur a saisi. new FormData(currentTarget) puis sur la variable de l'initialisation on va recuperer les 
+données du champs du formulaire grace a la methode get('name du champs input') après on doit envoyé notre fonction au 
+formulaire grace a la fonction d'evenement onSubmit(handleSubmit)
+
+3.creation des actions : comme nous dissons deja pour creer des actions on va aller dans notre slice ou tranche de donné
+Dans le slice par exemple expenseSlice nous allons creer des action grace a la cle reducers, les actions sont ni plus ni 
+moins que des fonctions la cle reducers va prendre comme valeur un objet c'est dans cette objet qu'on va mettre le nom
+de l'action qu'on veut creer comme cle et il aura comme valeur la fonction () => { } a l'interieure de la fonction on peut
+acceder a tous les données de notre slice grace au param de l'action on peut lui donner un nom selon nos gout dans mon cas
+je vais l'appeler currentSlice puis a l'interieure de la fonction on peut faire nos donnés d'initialisation dans mon cas
+expenseList puis on peut push mettre des données dans le slice.Ex : currentSlice.expenseList.push({nouvelle donné})
+
+4. pour pouvoir utiliser l'action il faudra l'exporter , pour l'exporter il a deux façon de faire cela :
+a- on creer une constante puis on l'affecte le slice.actions.nom-de-la-fonction-de-l'action
+Ex : const addExpense = expenseSlice.actions.addExpense
+puis après on fait export { addExpense }
+
+Plus tard quand on aura plein d'action il faudra faire la meme etape ce sera trop repetitif donc, javascript nous donne
+la posibilite de faire la destructuration des variable c'est ce qu'on va faire dans la deuxieme methode.
+
+b- La deuxieme methode consiste a destructurer nos variable ou constante comme ceci
+Ex : const { addExpense, autre_action }  = slice.actions;
+puis après on fait export { addExpense, autre_action }
+
+# comment appeller une action :
+Remarque : redux fonctionne comme un systeme d'event et listener
+En effet les actions sont des evenements qu'on va envoyer a nos slice qui comporte comme des listener
+quand un slice a une action et il va ecouter quand l'action va etre appelé et il va executer cette action.
+
+pour cela pour emettre un evenement on doit fait appelle a un hook de react-redux qui est appelé useDispatch()
+useDispatch() : son role est d'emettre des evenements
+Dans notre cas on va utiliser useDispatch pour emettre l'evenement addExpense depuis notre composant expenseInput comme
+ceci : 
+a- on va stocker useDispatch dans une variable dispatch en dehors de notre fonction d'evenement
+b- on va dire a dispatch d'emettre l'evenement de la fonction addExpense() Ex : dispatch(addExpense())
+
+# comment recuperer les données qui provient du formulaire dans les actions :
+pour recuperer les données du formulaire dans les actions il faut preceder ainsi :
+a- il suffit de passer nos variable lors de l'emission de l'evenement
+b- pour avoir acces a nos variables qu'on a emis lors de l'envoie de l'evenement on doit passer le mot action comme 
+deuxième paramettre au niveau de notre evenement dans le sclice.
+
+Les action qui est comme deuxième argument envoie toujours un objet qui contient deux elements :
+1. type : nom du slice / nom de l'action : c'est comme un identifiant de l'action
+2. payload : { les données qu'on avait envoyé lors de l'emission de l'evenement }
+
+Remarque : ExpenseInput c'est un composant qui est devenue connecté au store puisque il utilise useDispatch pour ecrire
+dans le store. Maintenant il n'est plus un composant généric c'est a dire ce n'est plus un composant que quelqu'un peut
+peut utiliser depuis sons app , c'est vraiment lier a notre logique. Dans ce cas quand on contient des composants qui ont 
+un comportement comme ça on cree un dossier appelé container dans le dossier components puis on les deplacent dans ce
+dossier. c'est pour indiquer a quelqu'un ou un autre dev que les composants qui se trouvent dans ce dossier ce sont des 
+composant connectées, que ce sont pas des composants qu'on peut utiliser n'importe où dans le projet.
+
+Nb : Un composant est un container lorsqu'il est connecté au store dès qu'il lit ou il ecrit depuis le store.
+
+
+# Comment lire dans le store avec useSelector() :
+
+EXO-2 : 
+on va recuperer les données du slice ou tranche de donné ensuite l'afficher a la place du text expense history
+
+pour cela on va dans le composant App on va importer le composant List, puis remplacer le par le text expense history
+ce composant va avoir un props items qui sera un tableau [] qui va contenir les données du slice.
+
+ce composant va retourné un autre composant ListItem qui sera une liste qui va afficher un nom et un prix.
+ce composant ListItem va recevoir un props item qui va erite de items du composant List.
+
+pour lire des données dans des sclice dans le store il faut suivre les etapes suivantes :
+1. importe un hook de react-redux appelé useSelector()
+2. on stocke useSelector dans une constante ou variable
+3. useSelector() est une fonction qui nous permet d'avoir une fonction callback
+qui nous permet d'acceder au store , puis dans cette fonction on va decider qu'est ce qu'on veut retourné du store
+4. ensuite il suffit de mettre la cle du sclice qui est dans le store qu'on veut lire . le nom de initialState qui est dans
+le slice ou tranche de donné on peut consulter redux dev tools pour voir l'achitecture des données qu'on veut lire.
+
+
+# Spread operator optionel :
+Les spread operator c'est un outil de ES6 qu'on utilise sur les tableau et les objets pour faire des modification plus 
+radipedement avec moins de ligne de code.
+
+spread operator avec les tableaux : Par exemple si on a un tableau fruitJaune qui contient : banane et orange comme element , et un autre tableau 
+fruitRouge qui contient elle aussi cerise et fraise comme element et un autre tableau fruitVert qui contient avocat comme
+element. si on donne a une var ou const la valeur de ces tableau on va recevoir comme resultat. un tableau qui contient 
+trois tableaux a l'interieure : Ex : const fruits = [[banane, orange], [cerise, fraise], [avocat] ]
+
+pour recevoir seulement les elements des tableaux on doit faire une destructuration ou concatenation des tableaux avec ceci :
+il suffit de mettre un spread operator ou trois poins l'une après l'autre devant le nom du tableau. 
+Ex : fruits = [...fruitJaune, ...fruitRouge, ...fruitVert]
+
+Cela veut dire qu'au tableaux de prendre seulement les elements qu'ils contient et de nous l'envoyé. comme ceci :
+Ex : fruits = [banane, orange, cerise, fraise, avocat] 
+
+spread operator avec les objets :  Par exemple si on a un objet fruitJaune qui contient : comme cle fruit1 et banane  
+comme valeur, puis fruit2 comme cle et orange comme valeur et on a un autre objet fruitRouge qui contient : comme cle fruit3 
+et valeur fraise, puis fruit4 comme cle et cerise comme valeur et on a un troisième objet fruitVert qui contient comme cle 
+fruit5 et comme valeur avocat. si on donne a une var ou const la valeur de ces objets on va recevoir comme resultat. un objet 
+qui contient trois objets a l'interieure : Ex : const fruits = {{banane, orange}, {cerise, fraise}, {avocat} }
+
+pour recevoir seulement les elements des objets on doit faire une destructuration ou concatenation des objets avec ceci :
+il suffit de mettre un spread operator ou trois poins l'une après l'autre devant le nom de l'objet. 
+Ex : fruits = {...fruitJaune, ...fruitRouge, ...fruitVert} 
+
+modification dans un objet existant avec spread operator :
+pour faire des modification sur un objet existant il faut suivre les etapes suivantes :
+
+1. faire un copie de l'objet ou du tableau avec la syntaxe de spread operator ...
+2. pour modifier la valeur il suffit de specifier la cle existante de l'element de l'objet et une valeur
+
+Ex : const copieFruits = {...fruits, fruitVert : quenêpe} puis la valeur quenêpe va remplacer avocat dans la cle fruitVert
+
+# EXO-3 : On va creer le composant IncomeInput (revenueInput) pour entrer notre revenue initial, cela va permettre lorsqu'on
+entre un revenu ca va directement dans le store. pour que plus tard dans la section qui affiche le total et l'argent restant
+pour qu'on puisse faire un calcul entre l'argent qu'on avait initialement et la somme de nos depenses.
+
+Les etapes qu'on va faire :
+1. on va dans le composant App on va remplacer le composant IncomeInput par le text income input, ce composant 
+contient un props
+
+2. faire une fonction onChange qui va recuperer la valeur qu'on saisi dans le composant IncomeInput
+3. on va mettre un nouveau section dans le sclice avec une valeur par defaut qui sera de type entier ou float,
+4. on va lire la valeur du nouveau section dans le store dans l'input du composant IncomeInput avec le useSelector
+l'input va recevoir cette valeur dans son attribut defaultValue
+
+5. on va faire changer cette valeur dans le store quand on saisi un nouveau valeur , pour cela on doit creer une nouvelle
+action pour envoyer au store la valeur qu'on saisi dans l'input.
+6. on doit changer le type de l'icome qu'on a recu du formulaire en float pour cela on doit convertir le str en 
+Number.parseFloat(nom de la variable str)
+7. on va changer le type de price dans la section expenseList, pour cela on doit faire un spread sur l'objet puis faire
+la convertion sur la valeur qu'on veut convertir
+8. puisque ce composant devient un composant connecté au store on doit le deplacer dans le dossier components/container
+
+
+# reduce [optionel] :
+reduce c'est une fonction qui resemble a map qui va s'appliquer sur les tableaux et il retourne comme resultat un
+seul element. 
+
+par exemple : on a un tableau qui contient : [1,2,10] , si on veut a la sortir qu'on retrouve avec la somme de ce tableau
+on doit appliquer la fonction reduce.
+
+comment cette fonction marche ?
+1. on doit faire .reduce sur le tableau en question 
+2. cette fonction reduce((acumulator, currentItem) => {}, 0) a acces avec un acumulator c'est l'indice de depart
+de l'itteration et il en acces a l'element courant qui sont les element du tableau.
+3. en deuxième paramettre on doit passer la valeur qu'on veut pour l'acumulator (la valeur initial)
+4. on peut faire l'operation d'addition pour trouver la somme des elements du tableau : return accumulator + currentItem
+5. si on veut on peut deplacer la fonction en dehors de reduce et l'envoyer en premier paramettre de reduce et la valeur
+initial en deuxième paramettre.
+
+
+#EXO-4 : Dans cette exercice on va remplacer le composant ExpenseTotal dans la section expense total dans le composant
+App puis on afficher le prix total de nos depenses c'est a dire la somme de nos depenses, en second lieu on va faire
+la difference entre l'argent initial qu'on avait et la somme de nos depences c'est a dire on va faire la soustraction entre
+l'argent initial : income et la somme d'argent depensé ExpenceList.
+
+Les etapes pour realiser cette exercice :
+1. on va remplacer le composant ExpenseTotal dans App
+2. on va recuperer la somme des argents depensé dans le store avec les useSelector()
+3. on va faire la somme de tous les argents depensé et l'afficher dans le composant ExpenseInput
+4. on va recuperer la somme d'argent initial
+5. on va faire la soustraction de l'argent initial et la somme d'argent depensé
+
+# Persister le store :
+Pourquoi utiliser Redux Persist ?
+Redux Persist est un outil de gestion d'état qui permet à l'état d'un magasin Redux de persister entre les sessions
+de navigateur et d'application, améliorant ainsi l'expérience utilisateur en préchargeant le magasin avec des données 
+persistantes. Il offre également une protection contre les pannes inattendues et les problèmes de réseau, empêchant la
+perte de données et offrant une expérience utilisateur plus fiable.
+
+Redux Persist propose différentes configurations, notamment des stratégies de mise en cache personnalisées, la 
+possibilité de choisir les parties de l'état à conserver et à exclure, ainsi que le mécanisme de stockage à utiliser. 
+Il est également doté de fonctionnalités intégrées telles que les migrations, les transformations et les fusions 
+personnalisées.
+
+comment persister le store ?
+
+La persistance d'un store permet de gader les données en memoire lorsqu'on rafrechis une page. on peut dire aussi
+c'est l'action d'enregistrer toutes les données du store dans le systeme de cache du navigateur pour qu'on puisse
+conserver ces données lorsque la page est rafrechis.
+
+pour persister le store il faut installer une librairie de redux nommé redux-persist avec la commande svt :
+npm i reduxt-persist. Après l'installation du bibliothèque on doit importer 4 fonctions pour la configuration de la
+persistance du store.
+
+voici les etapes a suivre pour configurer la persistance du store :
+1.etape d'importation des fonctions dans différents librairie
+on doit importer :
+ combineReducers depuis @reduxjs/toolkit
+ storage depuis redux-persist/lib/storage
+ persistStore et persistReducer depuis redux-persist
+
+Qu'est ce que combineReducers ?
+combineReducers : c'est une fonction qui nous permettent de combiner nos reducers
+
+Comment les reducers fonctionnent ?
+Leur fonctions c'est d'appeller chaque réducteur de tranche à chaque fois qu'une action est envoyée et rassemble leurs 
+résultats dans un seul objet d'état. Cela permet de diviser la logique du réducteur en fonctions distinctes, 
+chacune gérant sa propre tranche d'état de manière indépendante.
+
+2. on va declarer une fonction qui va contenir l'ensemble de nos reducers combiné par exemple dans mon cas je vais creer
+une const rootReducers en effet c'est la racine de nos reducers. puis on va envoyer nos reducers dans la fonction 
+combineReducers({allreducers})
+
+3. pour persister nos tranches de données on va creer une constante appelé persistedReducers on l'affectera a la fonction
+persistReducer({}) puis en second lieu on va envoyer la variable qui contient nos reducers combiné dans mon cas c'est
+rootReducers.
+
+persistReducer(param1, {rootReducers}) : va prendre en premiere paramettre une petite configuration pour dire comment on 
+veut persister nos reducers.
+
+4. on doit creer une constante pour configurer la persistance des reducers : par exemple dans mon cas on va creer une const
+appelé persistConfig qui sera un objet , il avoir un premier element qui sera un cle (key) : c'est une identifiant qui
+va representer nos données dans le cache en general on lui donne comme valeur root, un deuxième element on doit specifier 
+la version, ensuite il faut presicer ce qu'on va utiliser comme systeme pour persister nos données, dans mon cas c'est 
+storage.
+
+5. il faut envoyer les données persité au configuration du store c'est a dire dans la fonction de configureStore(), Dans
+mon cas les données persisté qu'on va envoyer c'est persistedReducers dans la cle reducer.
+
+6. pour pouvoir acceder a nos données persistées du store dans nos composants on doit creer une petite variable appelé
+persistor puis on va affecter a la variable persistor la fonction persistStore() qui va recevoir notre store.
+c'est grace a cette variable qu'on pouvoir acceder au données persisté du store depuis l'exterieure.puis il faut l'exporter
+
+7. Dans la racine de notre app c'est a dire l'index on doit importer :
+PersistGate : qui est un composant qui va recevoir les données persistant de notre store
+PersistGate se trouve dans redux-persist/integration/react
+
+8. on doit enrober ou entourer le composant App avec le composant PersistGate qui va recevoir comme props persistor
+qui sont les données persister de notre store.
+
+9. Aprè cette configuration tous va fonctionner, mais on va trouver une petite erreur ce n'est pas grave pour corriger cette
+erreur on va sur la documentation dans la section use with redux-persist . Qui nous expliquent si on utilise redux-persist
+il y a des actions de type dispatch qu'on doit ignorer par exemple voici une liste :
+FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER ensuite il va faloir dire a redux dans le configureStore d'aller ignorer
+ces types d'actions.
+
+middleware : (getDefaultMiddleware) => {
+    return getDefaultMiddleware({
+      serializableCheck : {
+        ignoredActions : [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER ]
+      }
+    });
+}
+après tout devrait fonctionner correctement.
+
+10. par defaut toutes les tranches de donnés ou slice sont persister , mais on a la possibilité de specifier quel tranche
+de donné qu'on veut persister. pour cela on doit aller dans notre variable de configuration qui etait persistConfig
+pour aller dire qu'on va envoyer une whiteList ou blackList. si on met un whiteList = [] il va arreter de persister toutes
+les données sauf ceux qu'on mettre dans le whiteList. le nom qu'on va mettre c'est le nom de la clé de la tranche de donné.
+Dans le cas on utilise un blackList = [] on dit a redux de persister toutes les données sauf ceux qui sont dans la blackList
+
+
+# Les middleware avec redux :
+Le middleware Redux fournit un point d'extension tiers entre l'envoi d'une action et le moment 
+où elle atteint le réducteur .
+Avec les middleware on peut se mettre en ecoute sur les actions. 
+puisque les middleware sont en dessous des actions on peut ecouter n'importe quel action
+par exemple si on ajoute une depense on peut ecouter cette action et afficher cette depense dans la console ou 
+l'enregistrer dans une base de donné pour faire de l'analyse etc...
+
+#EXO-5 : on va creer un logger pour toutes nos actions dans l'application et on va afficher ces actions dans la console
+
+Les etapes a suivre pour creer le middleware logger :
+1. Dans le dossier store/ on va creer un dossier appelé middleware/ ensuite on va creer un fichier appelé
+logger-middleware.js 
+2. Dans le fichier logger-middleware.js on va ecouter les actions de notre app 
+3. on doit importer une fonction appelé createListenerMiddleware depuis @reduxjs/toolkit
+4. on va creer une constante appelé loggerMiddleWare on lui affecte la fonction createListenerMiddleware
+
+5. pour que cette middleware fonctionne il faut dire a redux de l'utiliser pour cela on va dans le fichier index.js de notre
+store dans la section middleware sur getDefaultMiddleware on fait ceci :
+getDefaultMiddleware().prepend(nomDuMiddleware.middleware)
+
+6. on va dire a notre middleware de se mettre en ecoute : nomDuMiddleware.startListening({}) dans ce listener on va envoyer
+deux choses :
+a- Quels action qu'on veut ecouter
+b- Qu'est ce qu'on veut faire a chaque fois que l'une de ces actions qu'on ecoute est appeller
+
+pour presicer quel action qu'on veut ecouter on doit utiliser la fonction predicate : () => {}
+pour preciser qu'est ce qu'on veut faire lorsque cette action est appeller on doit utiliser la fonction 
+effect : async () => { } qui est une fonction asynchronne. chacune de ces fonction recoit un argument cacher qui est action
+A chaque fois une action va etre appeler il va passer dans ces deux fonctions , dans la fonction predicate on va filtrer les
+actions pour dire que si on veut le garder ou pas pour cela on utilise un boolean.
+
+7- on peut afficher l'etat du store juste après que l'action soient passer, pour cela on doit passer comme deuxième
+argument dans la fonction effect : async (action, listenerAPI) sur ce listenerAPI on peut utiliser une fonction getState()
+pour recuperer toute le store. ça va afficher l'ensemble du store
+
+8- pour ecouter sur une action specifique ou precis on doit utiliser le paramettre action de la fonction predicate
+ensuite on a accer au type et au payload, on peut dire on va ecouter si tel action est de type nomDuSlice/nomDeL'action
+Donc ca va envoyer a la fonction effect seulement les action qu'on a specifier.
+
+9- pour ecrire moins de code et capturer tous qu'on veut il y a une petite fonction dans reduxjs/toolkit qu'on peut
+utiliser c'est isAnyOf. pour utiliser ces fonctions on doit mettre matcher a la place de predicate et utiliser isAnyOf()
+comme valeur. ensuite dans la fonction isAnyOf(action1, action2) on peut specifier quel action on va gader ou ecouter.
+on doit importer ces actions depuis notre tranche de donné ou slice.
+
+10- pour dispatcher un element depuis le middleware on doit proceder ainsi :
+par exemple dans notre slice on peut avoir une section qui contient le nombre de fois que les actions de notre 
+app est appeler pour cela on va creer une nommé countActionPerformed : 0 par defaut on a 0 action appeler
+et a chaque fois qu'on va appeler une action on va augmenter countActionPerformed de +1, pour cela on doit creer une 
+action appelé incrementActionCountPerformed qui va faire currentSlice.countActionPerformed++ puis on va l'exporter
+
+11- on va retourné vers notre logger pour aller dispatcher l'action incrementActionCountPerformed quand une action a 
+été ecouté par la fonction matcher. pour faire cela il suffit d'utiliser la fonction dispatch sur le deuxième paramettre
+de la fonction effect qui est listenerAPI pour emettre l'action ou l'evenement incrementActionCountPerformed()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
